@@ -47,8 +47,12 @@ namespace Bank
                     conn.Open();
                     // First check if the user name exists
 
+                    // Old query the passwords where unprotected
+                    //string selectQuery = "SELECT [username],[password] FROM  [afdemp_csharp_1].[dbo].[users] WHERE [username] = @id";
 
-                    string selectQuery = "SELECT [username],[password] FROM  [afdemp_csharp_1].[dbo].[users] WHERE [username] = @id";
+                    //New query
+                    string selectQuery = "OPEN SYMMETRIC KEY Bootkey DECRYPTION BY CERTIFICATE Bootcert; SELECT [username],CONVERT(varchar, DecryptByKey([password])) FROM  [afdemp_csharp_1].[dbo].[users] WHERE [username] = @id; CLOSE SYMMETRIC KEY Bootkey";
+
                     using (SqlCommand cmd = new SqlCommand(selectQuery, conn))
                     {
                         cmd.Parameters.AddWithValue("@id", SqlDbType.VarChar);
@@ -220,38 +224,6 @@ namespace Bank
             }
         }
 
-        /* Not needed
-         * 
-        internal static bool WithdrawFrom(string user, decimal amount)
-        {
-            using (SqlConnection conn = new SqlConnection(ConnectionString))
-            {
-                try
-                {
-
-                    // Connect to the database
-                    conn.Open();
-                    string selectQuery = "UPDATE [accounts] SET [amount] =[amount] - @mn, [transaction_date]=CURRENT_TIMESTAMP FROM [accounts] INNER JOIN [users] ON [users].[id] =[accounts].[user_id] WHERE [afdemp_csharp_1].[dbo].[users].[username] = @id";
-                    using (SqlCommand cmd = new SqlCommand(selectQuery, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@mn", SqlDbType.Money);
-                        cmd.Parameters.AddWithValue("@id", SqlDbType.VarChar);
-                        cmd.Parameters["@id"].Value = user;
-                        cmd.Parameters["@mn"].Value = amount;
-                        cmd.ExecuteNonQuery();
-
-                        return true;
-                    }
-                }
-                catch
-                {
-                    return false;
-                }
-
-            }
-
-
-        }
-        */
+        
     }
 }
