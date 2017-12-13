@@ -1,0 +1,54 @@
+﻿--Masterkey = "Bootcamp"
+--Certificate = "Bootcert"
+--Subject="Bootcampcert"
+--Key="Bootkey"
+
+--Commands used in SQL 
+
+--Create key:
+CREATE MASTER KEY ENCRYPTION BY 
+PASSWORD = 'Bootcamp' 
+
+--Create certificate:
+CREATE CERTIFICATE Bootcert
+WITH SUBJECT = 'Bootcampcert'; 
+
+--Create Symmetric key:
+CREATE SYMMETRIC KEY Bootkey 
+WITH ALGORITHM = AES_128 
+ENCRYPTION BY CERTIFICATE Bootcert; 
+
+--To encrypt passwords:
+
+-- Create new column
+ALTER TABLE users 
+ADD ecnryptedpassword varbinary(MAX )NULL 
+
+-- Encrypt the passwords and add them to the new column
+OPEN SYMMETRIC KEY Bootkey 
+DECRYPTION BY CERTIFICATE Bootcert; 
+
+-- How to encrypt using a key: EncryptByKey(Key_GUID('Bootkey'), password)
+
+UPDATE users 
+SET [encryptedpassword] = EncryptByKey(Key_GUID('Bootkey'), [password]); 
+
+CLOSE SYMMETRIC KEY Bootkey; 
+
+-- get rid of the old column
+ALTER TABLE users DROP COLUMN password ;  
+--and rename the new column to password
+EXEC SP_RENAME 'users.encryptedpassword','password','COLUMN'
+
+
+--To decrypt passwords (in the application):
+OPEN SYMMETRIC KEY Bootkey 
+DECRYPTION BY CERTIFICATE Bootcert; 
+-- Instead of password use CONVERT(varchar, DecryptByKey(password))
+SELECT CONVERT(varchar, DecryptByKey(password)) FROM user;
+
+CLOSE SYMMETRIC KEY Bootkey; 
+
+
+
+
