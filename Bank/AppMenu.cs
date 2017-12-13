@@ -107,6 +107,7 @@ namespace Bank
         public override void ShowMenu()
         {
             Console.CursorVisible = false;
+            //Console.TreatControlCAsInput = true;
             while (true)
             {
                 string Selection = BuildMenu(MenuChoices, Message);
@@ -262,6 +263,7 @@ namespace Bank
             Console.Write("Thank you for using Co-op Bank services.\nPress any key to exit.");
             Console.ReadKey();
             Console.CursorVisible = true;
+            //Console.TreatControlCAsInput = false;
 
         }
 

@@ -100,7 +100,8 @@ namespace Bank
             */
             return Name;
 
-        }
+        }                //Console.TreatControlCAsInput = true;
+
 
 
         public static string GetPassword()
@@ -117,7 +118,6 @@ namespace Bank
                 key = Console.ReadKey(true);
 
                 // Prevent the app from ending if CTL+C is pressed.
-                //Console.TreatControlCAsInput = true;
 
                 // This loop gets the password and allows pressing backspace to delete part of the password
                 if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter)
