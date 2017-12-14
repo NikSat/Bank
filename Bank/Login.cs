@@ -59,7 +59,7 @@ namespace Bank
 
         public static void ErrorMessage()
         {
-            Console.Write("It appears there is a problem with your registration, please contact a bank representative...\n");
+            Console.Write("It appears there is a problem with verifying your credentials. Please try again later.\nIf the problem persists, contact a bank representative...\n");
         }
 
 
@@ -67,40 +67,14 @@ namespace Bank
 
         public static string GetName()
         {
-            //ConsoleKeyInfo key;
             string Name = "";
             Console.Write("Please enter your user name: ");
             Name=Console.ReadLine();
             
-            /*  Not needed
-            do
-            {
-                // This part revent the app from ending if CTL+C is pressed.
-                // Read each key (ReadKey() allows the key to be shown on the console)
-                key = Console.ReadKey();
 
-                Console.TreatControlCAsInput = true;
-
-                // This loop gets the name and allows pressing backspace to delete part of the password
-                if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter)
-                {
-                    Name += key.KeyChar;
-
-                }
-                else
-                {
-                    if (key.Key == ConsoleKey.Backspace && Name.Length > 0)
-                    {
-                        Name = Name.Substring(0, (Name.Length - 1));
-                        Console.Write("\b \b");
-                    }
-                }
-            }
-            while (key.Key != ConsoleKey.Enter);
-            */
             return Name;
-
-        }                //Console.TreatControlCAsInput = true;
+            //Console.TreatControlCAsInput = true;
+        }
 
 
 

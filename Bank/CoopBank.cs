@@ -26,10 +26,10 @@ namespace Bank
         ///
 
         private string UserName;
-        bool connect;
-        int count = 3;
-        User CurrentUser;
-        internal InternalBank Current;
+        private bool connect;
+        private int count = 3;
+        private User CurrentUser;
+        private InternalBank Current;
 
 
         // Functions go here

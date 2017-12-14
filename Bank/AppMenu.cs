@@ -153,13 +153,16 @@ namespace Bank
 
         internal override void Deposit()
         {
+            string Type = "Deposit to";
             index = 0;
             string dep;
             decimal deposit;
             decimal amount = Inter.GetBalance(false).Item2;
             if (amount == -1)
             {
-                Console.WriteLine("Something went wrong....\nPlease try again later, press any key to continue");
+                Inter.Logger("*FAILED " + Type, "-", 0, false);
+                Console.Clear();
+                Console.WriteLine("\n\n\t\tSomething went wrong....\n\nPlease try again later, press any key to continue");
                 Console.ReadKey();
                 return;
             }
@@ -167,6 +170,14 @@ namespace Bank
             Console.Clear();
             Console.CursorVisible = false;
             string a = Inter.UserName;
+            if (Users.Count == 1 && Users[0]=="Error")
+            {
+                Inter.Logger("*FAILED " + Type, "-", 0, false);
+                Console.WriteLine("\n\n\t\tSomething went wrong, unable to perform this request.");
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                return;
+            };
             Users.RemoveAll(x => x == Inter.UserName);
             string messa = "Please select the name of the user you would like to make a deposit to:";
             while (Selection.Length == 0)
@@ -349,16 +360,29 @@ namespace Bank
             index = 0;
             string dep;
             decimal deposit;
+            string Type = "Deposit to";
             decimal amount = Inter.GetBalance(false).Item2;
             if (amount == -1)
             {
-                Console.WriteLine("Something went wrong....\nPlease try again later, press any key to continue");
+                Inter.Logger("*FAILED " + Type, "-", 0, false);
+                Console.Clear();
+                Console.WriteLine("\n\n\t\tSomething went wrong, unable to perform this request.");
+                Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
+                return;
             }
             string Selection = "";
             Console.Clear();
             Console.CursorVisible = false;
             string a = Inter.UserName;
+            if (Users.Count == 1 && Users[0] == "Error")
+            {
+                Inter.Logger("*FAILED " + Type,"-",0,false);
+                Console.WriteLine("\n\n\t\tSomething went wrong, unable to perform this request.");
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                return;
+            };
             Users.RemoveAll(x => x == Inter.UserName);
             string messa = "Please select the name of the user you would like to make a deposit to:";
             while (Selection.Length == 0)
@@ -440,12 +464,11 @@ namespace Bank
         internal override void SaveStatement()
         {
             Console.Clear();
-            Console.Write("Creating logfile.");
+            Console.Write("Creating logfile. ");
             Inter.Print();
             Console.Write("Thank you for using Co-op Bank services.\nPress any key to exit.");
             Console.ReadKey();
             Console.CursorVisible = true;
-
         }
 
         internal override void Exit()
@@ -467,9 +490,18 @@ namespace Bank
         // View other members accounts
         internal void ShowMember()
         {
+            string Type = "View Balance of";
             Console.CursorVisible = false;
             string Selection = "";
             Console.Clear();
+            if (Users.Count == 1 && Users[0] == "Error")
+            {
+                Inter.Logger("*FAILED " + Type, "-", 0, false);
+                Console.WriteLine("\n\n\t\tSomething went wrong, unable to perform this request.");
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                return;
+            };
             Users.RemoveAll(x => x == Inter.UserName);
             string messa = "Please select the name of the user you would like to check";
             while (Selection.Length == 0)
@@ -484,7 +516,7 @@ namespace Bank
             }
             else
             {
-                Console.Write($"\n\nAccount balance for user {Selection} on {DateTime.Now.ToString(Culture)} is {result.Item2.ToString("c", Culture)}\n\nPress any key to continue...");
+                Console.Write($"\n\nAccount balance for user: {Selection} on {DateTime.Now.ToString(Culture)} is {result.Item2.ToString("c", Culture)}\n\nPress any key to continue...");
 
             }
             Console.ReadKey();
@@ -494,6 +526,7 @@ namespace Bank
 
         internal void Withdraw()
         {
+            string Type = "Withdraw from";
             index = 0;
             string with;
             decimal withdraw;
@@ -502,6 +535,14 @@ namespace Bank
             Console.Clear();
             Console.CursorVisible = false;
             Users.RemoveAll(x => x == Inter.UserName);
+            if (Users.Count == 1 && Users[0] == "Error")
+            {
+                Inter.Logger("*FAILED " + Type, "-", 0, false);
+                Console.WriteLine("\n\n\t\tSomething went wrong, unable to perform this request.");
+                Console.WriteLine("\nPress any key to continue...");
+                Console.ReadKey();
+                return;
+            };
             string messa = "Please select the name of the user you would like to withdraw from:";
             while (Selection.Length == 0)
             {
@@ -510,8 +551,11 @@ namespace Bank
             amount = Inter.GetBalance(Selection,false).Item2;
             if (amount==-1)
             {
-                Console.WriteLine("Something went wrong....\nPlease try again later, press any key to continue");
+                Inter.Logger("*FAILED " + Type, Selection, 0, false);
+                Console.WriteLine("\n\n\t\tSomething went wrong, unable to perform this request.");
+                Console.WriteLine("\nPress any key to continue...");
                 Console.ReadKey();
+                return;
             }
             Console.TreatControlCAsInput = false;
             Console.WriteLine($"\nYou have selected: {Selection}");

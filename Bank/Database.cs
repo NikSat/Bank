@@ -14,6 +14,12 @@ namespace Bank
         private const string ConnectionString = "Data Source=LAPTOP\\SQLEXPRESS;Initial Catalog =afdemp_csharp_1; Integrated Security = true";
 
 
+        // Testing strings to simulate loss of connection  with the database 
+        //private static string ConnectionString = "Data Source=LAPTOP\\SQLEXPRESS;Initial Catalog =afdemp_csharp_1; Integrated Security = true";
+        //ConnectionString = "Data Source=LAPTOP\\SQLEXPRESS;Initial Catalog =afdemp_csharp_2; Integrated Security = true";
+
+
+
 
         internal static bool CheckConnection()
         {
@@ -38,6 +44,8 @@ namespace Bank
 
         internal static User CheckCredentials(string username, string password)
         {
+            // Loss of connection here
+            //ConnectionString = "Data Source=LAPTOP\\SQLEXPRESS;Initial Catalog =afdemp_csharp_2; Integrated Security = true";
 
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
@@ -127,23 +135,35 @@ namespace Bank
 
         internal static List<string> GetUsers()
         {
-            List<string> Users = new List<string>();
-            using (SqlConnection conn = new SqlConnection(ConnectionString))
-            {
-                // Connect to the database
-                conn.Open();
-                string selectQuery = "SELECT [username] FROM  [afdemp_csharp_1].[dbo].[users]";
-                using (SqlCommand cmd = new SqlCommand(selectQuery, conn))
-                {
+            // Loss of connection here
+            //ConnectionString = "Data Source=LAPTOP\\SQLEXPRESS;Initial Catalog =afdemp_csharp_2; Integrated Security = true";
 
-                    using (SqlDataReader reader = cmd.ExecuteReader())
+            List<string> Users = new List<string>();
+            try
+            {
+
+
+                using (SqlConnection conn = new SqlConnection(ConnectionString))
+                {
+                    // Connect to the database
+                    conn.Open();
+                    string selectQuery = "SELECT [username] FROM  [afdemp_csharp_1].[dbo].[users]";
+                    using (SqlCommand cmd = new SqlCommand(selectQuery, conn))
                     {
-                        while (reader.Read())
+
+                        using (SqlDataReader reader = cmd.ExecuteReader())
                         {
-                            Users.Add((string)reader[0]);
+                            while (reader.Read())
+                            {
+                                Users.Add((string)reader[0]);
+                            }
                         }
                     }
                 }
+            }
+            catch
+            {
+                Users.Add("Error");
             }
 
             return Users;
@@ -188,6 +208,9 @@ namespace Bank
 
         internal static bool DepositTo(string sender, string receiver, decimal amount)
         {
+            // Loss of connection here
+            //ConnectionString = "Data Source=LAPTOP\\SQLEXPRESS;Initial Catalog =afdemp_csharp_2; Integrated Security = true";
+
             using (SqlConnection conn = new SqlConnection(ConnectionString))
             {
                 try

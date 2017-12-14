@@ -24,10 +24,10 @@ namespace Bank
         internal List<string> Users { get; set; } = new List<string>();
         protected List<Tuple<string, string, DateTime,decimal,decimal>> SessionArchive = new List<Tuple<string, string, DateTime, decimal,decimal>>();
         internal List<string> Actions { get; set; }
-        internal string Message;
+        internal string Message { get; set; }
         protected AppMenu BankMenu;
         protected DateTime LastDate=DateTime.Now;
-        protected Decimal LastBalance=0;
+        protected Decimal LastBalance=-1;
 
 
 
@@ -60,7 +60,7 @@ namespace Bank
             // This part handles the logging to the archive (-1 means there was an error and the balance cannot be retrieved)
             if (result.Item2==-1)
             {
-                SessionArchive.Add(new Tuple<string, string, DateTime, decimal, decimal>("FAILED-View Personal Acoount", "n.a.", DateTime.Now, 0,LastBalance));
+                SessionArchive.Add(new Tuple<string, string, DateTime, decimal, decimal>("FAILED-View Personal Account", "n.a.", DateTime.Now, 0,LastBalance));
             }
             else
             {
@@ -113,12 +113,12 @@ namespace Bank
                 {
 
                     string Report = "*FAILED-" + TransactionType;
-                    SessionArchive.Add(new Tuple<string, string, DateTime, decimal, decimal>(TransactionType, touser, DateTime.Now, amoun,LastBalance ));
+                    SessionArchive.Add(new Tuple<string, string, DateTime, decimal, decimal>(Report, touser, DateTime.Now, amoun,LastBalance ));
                 }
                 else
                 {
                     string Report = "*" + TransactionType;
-                    SessionArchive.Add(new Tuple<string, string, DateTime, decimal, decimal>(TransactionType, touser, DateTime.Now, amoun, LastBalance));
+                    SessionArchive.Add(new Tuple<string, string, DateTime, decimal, decimal>(Report, touser, DateTime.Now, amoun, LastBalance));
 
                 }
             }
@@ -127,7 +127,7 @@ namespace Bank
                 if (suc == false)
                 {
                     string Report = "*FAILED-" + TransactionType;
-                    SessionArchive.Add(new Tuple<string, string, DateTime, decimal, decimal>(TransactionType, touser, result.Item1, amoun, result.Item2));
+                    SessionArchive.Add(new Tuple<string, string, DateTime, decimal, decimal>(Report, touser, result.Item1, amoun, result.Item2));
 
                 }
                 else
@@ -144,6 +144,10 @@ namespace Bank
         public override string ToString()
         {
             CultureInfo gr = new CultureInfo("el-GR");
+            if (LastBalance == -1)
+            {
+                return "Unable to retrieve summary for " + UserName +  ". Possible connection Error.";
+            }
             return "User name: " +UserName +" / Last transaction date: " +LastDate.ToString("d",gr) +" / Account Balance: " + LastBalance.ToString(gr);
         }
 

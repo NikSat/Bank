@@ -39,24 +39,25 @@ namespace Bank
             {
                 name ="statement_"+ DepictedUser + name;
             }
-            
+
+            bool flag = false;
+            while (File.Exists(name))
+            {
+                flag = true;
+                name = Rename(name);
+            }
+
+            if (flag)
+            {
+                Console.WriteLine($" File allready exists, renaming to {name}.");
+            }
+
             return name;
         }
 
         internal void CreateFile(string filename)
         {
-            bool flag = false;
-            while (File.Exists(filename))
-            {
-                flag = true;
-                filename=Rename(filename);
-            }
-            if (flag)
-            {
-                Console.WriteLine($" File allready exists, renaming to {filename}.");
-            }
-
-
+            
             try
             {
 
@@ -86,8 +87,17 @@ namespace Bank
                             {
                                 amount = PrintList[i].Item4.ToString("c", gr);
                             }
+                            string total;
+                            if (PrintList[i].Item5 == -1)
+                            {
+                                total = "-";
+                            }
+                            else
+                            {
+                                total = PrintList[i].Item5.ToString("c", gr);
+                            }
 
-                            sw.WriteLine(PrintList[i].Item1+"\t\t"+ PrintList[i].Item2 + "\t\t" + PrintList[i].Item3.ToString(gr) + "\t\t" + amount + "\t\t" + PrintList[i].Item5.ToString("c",gr));
+                            sw.WriteLine(PrintList[i].Item1+"\t\t"+ PrintList[i].Item2 + "\t\t" + PrintList[i].Item3.ToString(gr) + "\t\t" + amount + "\t\t" + total);
 
                         }
                         sw.WriteLine();
