@@ -16,7 +16,7 @@ namespace Bank
     {
         // Properties go here
         string DepictedUser;
-        protected List<Tuple<string, string, DateTime, decimal, decimal>> PrintList = new List<Tuple<string, string, DateTime, decimal, decimal>>();
+        protected List<Tuple<bool,string, string, DateTime, decimal, decimal>> PrintList = new List<Tuple<bool,string, string, DateTime, decimal, decimal>>();
         string statement;
         string Filename;
         CultureInfo gr = new CultureInfo("el-Gr");
@@ -75,33 +75,42 @@ namespace Bank
                     }
                     else
                     {
-                        sw.WriteLine("Transaction type\t\tParticipant Name\t\tDate and Time\t\tAmount\t\tBalance");
+                        sw.WriteLine("No\t\tStatus\t\tTransaction type\t\tParticipant Name\t\tDate and Time\t\tAmount\t\tBalance");
                         for (int i=0;i<PrintList.Count;i++)
                         {
                             string amount;
-                            if (PrintList[i].Item4==0)
+                            if (PrintList[i].Item5==0)
                             {
                                 amount = "-";
                             }
                             else
                             {
-                                amount = PrintList[i].Item4.ToString("c", gr);
+                                amount = PrintList[i].Item5.ToString("c", gr);
                             }
                             string total;
-                            if (PrintList[i].Item5 == -1)
+                            if (PrintList[i].Item6 == -1|| PrintList[i].Item1==false)
                             {
-                                total = "-";
+                                total = "-"; 
                             }
                             else
                             {
-                                total = PrintList[i].Item5.ToString("c", gr);
+                                total = PrintList[i].Item6.ToString("c", gr);
                             }
 
-                            sw.WriteLine(PrintList[i].Item1+"\t\t"+ PrintList[i].Item2 + "\t\t" + PrintList[i].Item3.ToString(gr) + "\t\t" + amount + "\t\t" + total);
+                            if (PrintList[i].Item1==true)
+                            {
+                                sw.WriteLine((i+1).ToString()+"\t\tCOMPLETE\t\t"+ PrintList[i].Item2 + "\t\t" + PrintList[i].Item3 + "\t\t" + PrintList[i].Item4.ToString(gr) + "\t\t" + amount + "\t\t" + total);
+
+                            }
+                            else
+                            {
+                                sw.WriteLine((i + 1).ToString() + "\t\tFAILED\t\t" + PrintList[i].Item2 + "\t\t" + PrintList[i].Item3 + "\t\t" + PrintList[i].Item4.ToString(gr) + "\t\t" + amount + "\t\t" + total);
+
+                            }
 
                         }
                         sw.WriteLine();
-                        sw.WriteLine("Note: n.a. stands for \"not applicable\", * denotes possible error in log. ");
+                        sw.WriteLine("Note: n.a. stands for \"not applicable\".");
                     }
 
 
@@ -139,7 +148,7 @@ namespace Bank
         }
 
         // Constructors go here
-        internal FileAccess(string user, List<Tuple<string, string, DateTime, decimal, decimal>> list, string state)
+        internal FileAccess(string user, List<Tuple<bool,string, string, DateTime, decimal, decimal>> list, string state)
         {
             DepictedUser = user;
             PrintList = list;

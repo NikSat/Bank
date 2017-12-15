@@ -22,7 +22,7 @@ namespace Bank
 
         internal string UserName { get; set; }
         internal List<string> Users { get; set; } = new List<string>();
-        protected List<Tuple<string, string, DateTime,decimal,decimal>> SessionArchive = new List<Tuple<string, string, DateTime, decimal,decimal>>();
+        protected List<Tuple<bool,string, string, DateTime,decimal,decimal>> SessionArchive = new List<Tuple<bool,string, string, DateTime, decimal,decimal>>();
         internal List<string> Actions { get; set; }
         internal string Message { get; set; }
         protected AppMenu BankMenu;
@@ -46,7 +46,7 @@ namespace Bank
 
         }
 
-        // Gets the account info from the database
+        // Gets the account info from the database log tells you  if you have to log it 
 
         public Tuple<DateTime, decimal> GetBalance(bool log)
         {
@@ -60,11 +60,11 @@ namespace Bank
             // This part handles the logging to the archive (-1 means there was an error and the balance cannot be retrieved)
             if (result.Item2==-1)
             {
-                SessionArchive.Add(new Tuple<string, string, DateTime, decimal, decimal>("FAILED-View Personal Account", "n.a.", DateTime.Now, 0,LastBalance));
+                SessionArchive.Add(new Tuple<bool,string, string, DateTime, decimal, decimal>(false,"View Personal Account", "n.a.", DateTime.Now, 0,LastBalance));
             }
             else
             {
-                SessionArchive.Add(new Tuple<string, string, DateTime, decimal, decimal>("View Personal Account", "n.a.", DateTime.Now, 0, result.Item2));
+                SessionArchive.Add(new Tuple<bool,string, string, DateTime, decimal, decimal>(true,"View Personal Account", "n.a.", DateTime.Now, 0, result.Item2));
                 LastDate = result.Item1;
                 LastBalance = result.Item2;
             }
@@ -75,12 +75,12 @@ namespace Bank
 
 
         // Deposit to a user
-        public bool Deposit(string user, decimal amount)
+        public Tuple<bool, decimal, decimal, DateTime> Deposit(string user, decimal amount)
         {
             string TransactType = "Deposit to";
-            bool success= Database.DepositTo(UserName, user, amount);
-            Logger(TransactType,user,amount,success);
-            return success;
+            Tuple<bool, decimal, decimal, DateTime> res = Database.DepositTo(UserName, user, amount);
+            Logger(res.Item1,TransactType,user,amount,res.Item4,res.Item2);
+            return res;
 
         }
 
@@ -100,44 +100,23 @@ namespace Bank
         }
 
         // This file logs the transactions to the sessions list - it also retrieves the current balance of the account
-        internal void Logger(string TransactionType,string touser,decimal amoun,bool suc)
+        internal void Logger(bool suc,string TransactionType,string touser,decimal amoun,DateTime when,decimal total)
         {
-            Tuple<DateTime, decimal> result = new Tuple<DateTime, decimal>(DateTime.Now, -1);
-            result = Database.CheckBalance(UserName);
+            //Tuple<bool,string, string, DateTime,decimal,decimal>
+            // Depending on whether the transaction was successfull or not the logger logs the result to the session archive 
 
-            // If the retrieval of the current balance fails for some reason just give the time it is now and the previous total ammount and warn with an asterisk
-
-            if (result.Item2 == -1)
-            {
-                if (suc == false)
+            if (suc == false)
                 {
-
-                    string Report = "*FAILED-" + TransactionType;
-                    SessionArchive.Add(new Tuple<string, string, DateTime, decimal, decimal>(Report, touser, DateTime.Now, amoun,LastBalance ));
-                }
-                else
-                {
-                    string Report = "*" + TransactionType;
-                    SessionArchive.Add(new Tuple<string, string, DateTime, decimal, decimal>(Report, touser, DateTime.Now, amoun, LastBalance));
-
-                }
-            }
-            else
-            {
-                if (suc == false)
-                {
-                    string Report = "*FAILED-" + TransactionType;
-                    SessionArchive.Add(new Tuple<string, string, DateTime, decimal, decimal>(Report, touser, result.Item1, amoun, result.Item2));
+                    SessionArchive.Add(new Tuple<bool,string, string, DateTime, decimal, decimal>(false, TransactionType, touser, when, amoun, total));
 
                 }
                 else
                 {
-                    SessionArchive.Add(new Tuple<string, string, DateTime, decimal, decimal>(TransactionType, touser, result.Item1, amoun, result.Item2));
-                    LastDate = result.Item1;
-                    LastBalance = result.Item2;
+                    SessionArchive.Add(new Tuple<bool,string, string, DateTime, decimal, decimal>(true,TransactionType, touser, when, amoun, total));
+                    LastDate = when;
+                    LastBalance = total;
                 }
-            }
-
+            
         }
 
         // Override ToString()
@@ -187,12 +166,12 @@ namespace Bank
         // Extra Functions only the admin can do 
 
         // Withdraw from users
-        public bool Withdraw(string user, decimal amount)
+        public Tuple<bool, decimal, decimal, DateTime> Withdraw(string user, decimal amount)
         {
             string TransactType = "Withdraw from";
-            bool success=Database.DepositTo(user,UserName,amount);
-            Logger(TransactType, user, amount, success);
-            return success;
+            Tuple<bool, decimal, decimal, DateTime> res = Database.DepositTo(user,UserName,amount);
+            Logger(res.Item1, TransactType, user, amount, res.Item4, res.Item3);
+            return res;
         }
 
         // See the balance of other users
@@ -208,11 +187,11 @@ namespace Bank
 
             if (result.Item2 == -1)
             {
-                SessionArchive.Add(new Tuple<string, string, DateTime, decimal, decimal>("FAILED-View Balance of", user, DateTime.Now, 0, 0));
+                SessionArchive.Add(new Tuple<bool,string, string, DateTime, decimal, decimal>(false,"View Balance of", user, DateTime.Now, 0, 0));
             }
             else
             {
-                SessionArchive.Add(new Tuple<string, string, DateTime, decimal, decimal>("View Balance of", user, DateTime.Now, 0, result.Item2));
+                SessionArchive.Add(new Tuple<bool,string, string, DateTime, decimal, decimal>(true,"View Balance of", user, result.Item1, 0, result.Item2));
 
             }
 

@@ -206,7 +206,7 @@ namespace Bank
         }
 
 
-        internal static bool DepositTo(string sender, string receiver, decimal amount)
+        internal static Tuple<bool, decimal, decimal, DateTime> DepositTo(string sender, string receiver, decimal amount)
         {
             // Loss of connection here
             //ConnectionString = "Data Source=LAPTOP\\SQLEXPRESS;Initial Catalog =afdemp_csharp_2; Integrated Security = true";
@@ -217,30 +217,54 @@ namespace Bank
                 {
                     // Connect to the database
                     conn.Open();
-                    string selectQuery = "UPDATE [accounts] SET [amount] =[amount] - @mn, [transaction_date]=CURRENT_TIMESTAMP FROM [accounts] INNER JOIN [users] ON [users].[id] =[accounts].[user_id] WHERE [afdemp_csharp_1].[dbo].[users].[username] = @id";
+                    // Do both updates in one query
+                    string selectQuery = "UPDATE [accounts] SET [amount] =[amount] - @mn, [transaction_date]=CURRENT_TIMESTAMP FROM [accounts] INNER JOIN [users] ON [users].[id] =[accounts].[user_id] WHERE [afdemp_csharp_1].[dbo].[users].[username] = @id1;UPDATE [accounts] SET [amount] =[amount] + @mn, [transaction_date]=CURRENT_TIMESTAMP FROM [accounts] INNER JOIN [users] ON [users].[id] =[accounts].[user_id] WHERE [afdemp_csharp_1].[dbo].[users].[username] = @id2";
                     using (SqlCommand cmd = new SqlCommand(selectQuery, conn))
                     {
                         cmd.Parameters.AddWithValue("@mn", SqlDbType.Money);
-                        cmd.Parameters.AddWithValue("@id", SqlDbType.VarChar);
-                        cmd.Parameters["@id"].Value = sender;
+                        cmd.Parameters.AddWithValue("@id1", SqlDbType.VarChar);
+                        cmd.Parameters.AddWithValue("@id2", SqlDbType.VarChar);
+                        cmd.Parameters["@id1"].Value = sender;
+                        cmd.Parameters["@id2"].Value = receiver;
                         cmd.Parameters["@mn"].Value = amount;
                         cmd.ExecuteNonQuery();
+
+                    }
+                    // Now get the account details for both
+                    selectQuery = "SELECT [transaction_date],[amount] FROM [afdemp_csharp_1].[dbo].[accounts] INNER JOIN [afdemp_csharp_1].[dbo].[users] ON [afdemp_csharp_1].[dbo].[users].id=[afdemp_csharp_1].[dbo].[accounts].user_id WHERE [afdemp_csharp_1].[dbo].[users].[username]=@id1;SELECT [transaction_date],[amount] FROM [afdemp_csharp_1].[dbo].[accounts] INNER JOIN [afdemp_csharp_1].[dbo].[users] ON [afdemp_csharp_1].[dbo].[users].id=[afdemp_csharp_1].[dbo].[accounts].user_id WHERE [afdemp_csharp_1].[dbo].[users].[username]=@id2";
+                    using (SqlCommand cmd = new SqlCommand(selectQuery, conn))
+                    {
+                        cmd.Parameters.AddWithValue("@mn", SqlDbType.Money);
+                        cmd.Parameters.AddWithValue("@id1", SqlDbType.VarChar);
+                        cmd.Parameters.AddWithValue("@id2", SqlDbType.VarChar);
+                        cmd.Parameters["@id1"].Value = sender;
+                        cmd.Parameters["@id2"].Value = receiver;
+                        cmd.Parameters["@mn"].Value = amount;
+                        using (SqlDataReader reader = cmd.ExecuteReader())
+                        {
+                            // For sender
+                            reader.Read();
+                            Tuple<DateTime, decimal> result1 = new Tuple<DateTime, decimal>((DateTime)reader[0], (decimal)reader[1]);
+                            reader.NextResult();
+                            // For receiver
+                            reader.Read();
+                            Tuple<DateTime, decimal> result2 = new Tuple<DateTime, decimal>((DateTime)reader[0], (decimal)reader[1]);
+
+                            //The results combined  successful - sender -receiver - time of action
+                            Tuple<bool, decimal, decimal, DateTime> results = new Tuple<bool, decimal, decimal, DateTime>(true,result1.Item2,result2.Item2,result2.Item1);
+                            return results;
+
+                        }
                     }
 
-                    selectQuery = "UPDATE [accounts] SET [amount] =[amount] + @mn, [transaction_date]=CURRENT_TIMESTAMP FROM [accounts] INNER JOIN [users] ON [users].[id] =[accounts].[user_id] WHERE [afdemp_csharp_1].[dbo].[users].[username] = @id";
-                    using (SqlCommand cmd = new SqlCommand(selectQuery, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@mn", SqlDbType.Money);
-                        cmd.Parameters.AddWithValue("@id", SqlDbType.VarChar);
-                        cmd.Parameters["@id"].Value = receiver;
-                        cmd.Parameters["@mn"].Value = amount;
-                        cmd.ExecuteNonQuery();
-                    }
-                    return true;
+
+
                 }
                 catch
                 {
-                    return false;
+                    Tuple<bool, decimal, decimal, DateTime> results = new Tuple<bool, decimal, decimal, DateTime>(false, 0, 0, DateTime.Now);
+
+                    return results;
                 }
 
 
