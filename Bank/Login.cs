@@ -12,7 +12,6 @@ namespace Bank
         /// 
         /// This class handles only  the communication with the user
         /// and prints and receives data from the terminal
-        /// Can be replaced with WPF
         /// 
         /// </summary>
 
@@ -91,7 +90,7 @@ namespace Bank
                 // Read each key (ReadKey(true) hides the key from the console)
                 key = Console.ReadKey(true);
 
-                // Prevent the app from ending if CTL+C is pressed.
+                // Prevent the app from ending if CTL+C is pressed. *Overkill, decided not to use it after all
                 //Console.TreatControlCAsInput = false;
                 // This loop gets the password and allows pressing backspace to delete part of the password
                 if (key.Key != ConsoleKey.Backspace && key.Key != ConsoleKey.Enter)
@@ -122,8 +121,17 @@ namespace Bank
         {
             string tr;
             tr = (num == 1) ? "try" : "tries";
-            Console.Write("\nThe user name and password you have entered do not match our user database.\n");
-            Console.Write($"You will be allowed {num} more {tr} before the application terminates.\n\n");
+            Console.Write("\nThe user name and password you have entered ");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write("do not match");
+            Console.ResetColor();            
+            Console.Write(" our user database.\n");
+            Console.Write("You will be allowed ");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write($"{num}");
+            Console.ResetColor();
+            Console.Write($" more {tr} before the application terminates.\n\n");
+
 
         }
 
@@ -131,7 +139,11 @@ namespace Bank
         // Asks the user whether he wants to continue 
         public static bool Ask()
         {
-            Console.Write("If you would like to terminate now press q or any key to continue.\n\n");
+            Console.Write("If you would like to terminate now press ");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write("q");
+            Console.ResetColor();
+            Console.Write(" or press any key to try again.\n\n");
             ConsoleKeyInfo key;
             key = Console.ReadKey(true);
             if (key.KeyChar == 'q' || key.KeyChar == 'Q')

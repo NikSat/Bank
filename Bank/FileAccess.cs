@@ -15,11 +15,11 @@ namespace Bank
     internal class FileAccess
     {
         // Properties go here
-        string DepictedUser;
-        protected List<Tuple<bool,string, string, DateTime, decimal, decimal>> PrintList = new List<Tuple<bool,string, string, DateTime, decimal, decimal>>();
-        string statement;
-        string Filename;
-        CultureInfo gr = new CultureInfo("el-Gr");
+        private string DepictedUser { get; set; }
+        protected List<Tuple<bool, string, string, DateTime, decimal, decimal>> PrintList { get; set; } = new List<Tuple<bool, string, string, DateTime, decimal, decimal>>();
+        private string Statement { get; set; }
+        private string Filename { get; set; }
+        private CultureInfo Gr { get; set; } = new CultureInfo("el-Gr");
         // A pattern to name users        
         string patt = @"(^user)(\w)";
 
@@ -28,7 +28,7 @@ namespace Bank
         internal string GiveName(string user)
         {
             DateTime today = DateTime.Now;
-            string name ="_"+ today.ToString("dd") + "_" + today.Month.ToString(gr) + "_" + today.Year.ToString(gr) + ".txt";
+            string name ="_"+ today.ToString("dd") + "_" + today.Month.ToString(Gr) + "_" + today.Year.ToString(Gr) + ".txt";
             if (Regex.IsMatch(user, patt))
             {
                 string[] one = Regex.Split(user, patt);
@@ -66,7 +66,7 @@ namespace Bank
                     sw.WriteLine("\t\t\tCo-op Investment Bank\n\n");
                     sw.WriteLine($"Statement for user: {DepictedUser}\n");
                     sw.WriteLine($"Statement summary:");
-                    sw.WriteLine(statement);
+                    sw.WriteLine(Statement);
                     sw.WriteLine();
                     if (PrintList.Count==0)
                     {
@@ -85,7 +85,7 @@ namespace Bank
                             }
                             else
                             {
-                                amount = PrintList[i].Item5.ToString("c", gr);
+                                amount = PrintList[i].Item5.ToString("c", Gr);
                             }
                             string total;
                             if (PrintList[i].Item6 == -1|| PrintList[i].Item1==false)
@@ -94,17 +94,17 @@ namespace Bank
                             }
                             else
                             {
-                                total = PrintList[i].Item6.ToString("c", gr);
+                                total = PrintList[i].Item6.ToString("c", Gr);
                             }
 
                             if (PrintList[i].Item1==true)
                             {
-                                sw.WriteLine((i+1).ToString()+"\t\tCOMPLETE\t\t"+ PrintList[i].Item2 + "\t\t" + PrintList[i].Item3 + "\t\t" + PrintList[i].Item4.ToString(gr) + "\t\t" + amount + "\t\t" + total);
+                                sw.WriteLine((i+1).ToString()+"\t\tCOMPLETE\t\t"+ PrintList[i].Item2 + "\t\t" + PrintList[i].Item3 + "\t\t" + PrintList[i].Item4.ToString(Gr) + "\t\t" + amount + "\t\t" + total);
 
                             }
                             else
                             {
-                                sw.WriteLine((i + 1).ToString() + "\t\tFAILED\t\t" + PrintList[i].Item2 + "\t\t" + PrintList[i].Item3 + "\t\t" + PrintList[i].Item4.ToString(gr) + "\t\t" + amount + "\t\t" + total);
+                                sw.WriteLine((i + 1).ToString() + "\t\t*FAILED*\t\t" + PrintList[i].Item2 + "\t\t" + PrintList[i].Item3 + "\t\t" + PrintList[i].Item4.ToString(Gr) + "\t\t" + amount + "\t\t" + total);
 
                             }
 
@@ -152,7 +152,7 @@ namespace Bank
         {
             DepictedUser = user;
             PrintList = list;
-            statement = state;
+            Statement = state;
             Filename = GiveName(user);
             CreateFile(Filename);
 

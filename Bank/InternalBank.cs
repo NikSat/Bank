@@ -20,14 +20,14 @@ namespace Bank
     {
         // Properties go here
 
-        internal string UserName { get; set; }
-        internal List<string> Users { get; set; } = new List<string>();
+        protected internal string UserName { internal get; set; }
+        protected internal List<string> Users { internal get; set; } = new List<string>();
         protected List<Tuple<bool,string, string, DateTime,decimal,decimal>> SessionArchive = new List<Tuple<bool,string, string, DateTime, decimal,decimal>>();
-        internal List<string> Actions { get; set; }
-        internal string Message { get; set; }
-        protected AppMenu BankMenu;
-        protected DateTime LastDate=DateTime.Now;
-        protected Decimal LastBalance=-1;
+        protected internal List<string> Actions { internal get; set; }
+        protected internal string Message { internal get; set; }
+        protected AppMenu BankMenu { get; set; }
+        protected DateTime LastDate { get; set; } = DateTime.Now;
+        protected Decimal LastBalance { get; set; } = -1;
 
 
 
@@ -144,7 +144,7 @@ namespace Bank
         {
             UserName = name;
             Actions = new List<string> { "[View Personal Account]", "[Deposit to Account]", "[Save Statement to File and Exit]", "[Exit Application]" };
-            Message = $"Welcome user {name} \n\nBelow there is a selection of actions you can perform:";
+            Message = $"Welcome user: {name} \n\nBelow there is a selection of actions you can perform:";
             Users = GetUsers();
             BankMenu = new UserMenu(this);
             BankMenu.ShowMenu();

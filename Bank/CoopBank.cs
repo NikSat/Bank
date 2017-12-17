@@ -17,7 +17,6 @@ namespace Bank
             MainApp.SecureInput();
             MainApp.InitiateInternal();
 
-
         }
 
 
@@ -25,11 +24,11 @@ namespace Bank
         // The variables of the main function here
         ///
 
-        private string UserName;
-        private bool connect;
-        private int count = 3;
-        private User CurrentUser;
-        private InternalBank Current;
+        private string UserName { get; set; }
+        private bool Connect { get; set; }
+        private int Count { get; set; } = 3;
+        private User CurrentUser { get; set; }
+        private InternalBank Current { get; set; }
 
 
         // Functions go here
@@ -66,8 +65,8 @@ namespace Bank
         {
             Login.Greet();
             Login.CheckingConnection();
-            connect = Database.CheckConnection();
-            if (connect)
+            Connect = Database.CheckConnection();
+            if (Connect)
             {
                 Login.ConnectionSuccess();
             }
@@ -89,7 +88,7 @@ namespace Bank
             CurrentUser = CheckCredentials(UserName, Password);
 
 
-            while (count > 1)
+            while (Count > 1)
             {
                 if (CurrentUser == User.Error)
                 {
@@ -101,8 +100,8 @@ namespace Bank
                 
                 if (CurrentUser == User.Null)
                 {
-                    count--;
-                    Login.WarningMessage(count);
+                    Count--;
+                    Login.WarningMessage(Count);
                     Continue = Login.Ask();
                     if (!Continue) { break; }
                     //Console.WriteLine($"Continue {Continue}");

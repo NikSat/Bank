@@ -9,12 +9,12 @@ namespace Bank
     internal abstract class AppMenu
     {
         // Attributes go here
-        protected List<string> MenuChoices = new List<string>();
-        protected List<string> Users = new List<string>();
-        protected int index = 0;
-        protected string Message;
-        protected CultureInfo Culture;
-        protected dynamic Inter;
+        protected List<string> MenuChoices { get; set; } = new List<string>();
+        protected List<string> Users { get; set; } = new List<string>();
+        protected int Index { get; set; } = 0;
+        protected string Message { get; set; }
+        protected CultureInfo Culture { get; set; }
+        protected dynamic Inter { get; set; }
         // Inter is dynamic can change to Admin or SimpleUser at runtime
 
         // Functions go here
@@ -28,7 +28,7 @@ namespace Bank
             Console.WriteLine($"{message}\n\n");
             for (int i = 0; i < items.Count; i++)
             {
-                if (i == index)
+                if (i == Index)
                 {
                     Console.BackgroundColor = ConsoleColor.Gray;
                     Console.ForegroundColor = ConsoleColor.Black;
@@ -46,30 +46,30 @@ namespace Bank
 
             if (ckey.Key == ConsoleKey.DownArrow)
             {
-                if (index == items.Count - 1)
+                if (Index == items.Count - 1)
                 {
-                    index = 0;
+                    Index = 0;
                 }
                 else
                 {
-                    index++;
+                    Index++;
                 }
             }
             else if (ckey.Key == ConsoleKey.UpArrow)
             {
-                if (index <= 0)
+                if (Index <= 0)
                 {
-                    index = items.Count - 1;
+                    Index = items.Count - 1;
                 }
                 else
                 {
-                    index--;
+                    Index--;
                 }
             }
             else if (ckey.Key == ConsoleKey.Enter)
             {
-                string a= items[index];
-                index = 0;
+                string a= items[Index];
+                Index = 0;
                 return a;
             }
 
@@ -114,7 +114,7 @@ namespace Bank
         internal virtual void Deposit()
         {
             string Type = "Deposit to";
-            index = 0;
+            Index = 0;
             string dep;
             decimal deposit;
             decimal amount = Inter.GetBalance(false).Item2;
@@ -125,7 +125,7 @@ namespace Bank
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\n\t\tUnable to procceed. Transaction failed.\n");
                 Console.ResetColor();
-                Console.Write("\\nPlease try again later, press any key to continue...");
+                Console.Write("\nPlease try again later, press any key to continue...");
                 Console.ReadKey();
                 return;
             }
@@ -168,7 +168,10 @@ namespace Bank
                     Console.Write("You did not enter a number.\n");
                     if (n == 3)
                     {
-                        Console.Write("Three erroneous imputs. Returning to main menu.\nPress any key to continue...");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write("Three erroneous imputs. ");
+                        Console.ResetColor();
+                        Console.Write("Returning to main menu.\nPress any key to continue...");
                         Console.ReadKey();
                         Console.CursorVisible = false;
                         return;
@@ -202,7 +205,10 @@ namespace Bank
                     Console.Write("You do not have sufficient founds to complete this transaction.\n");
                     if (n == 3)
                     {
-                        Console.Write("Three erroneous imputs. Returning to main menu.\nPress any key to continue...");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write("Three erroneous imputs. ");
+                        Console.ResetColor();
+                        Console.Write("Returning to main menu.\nPress any key to continue...");
                         Console.ReadKey();
                         Console.CursorVisible = false;
                         return;
@@ -236,7 +242,10 @@ namespace Bank
                     Console.Write("You may not use zero or a negative number.\n");
                     if (n == 3)
                     {
-                        Console.Write("Three erroneous imputs. Returning to main menu.\nPress any key to continue...");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write("Three erroneous imputs. ");
+                        Console.ResetColor();
+                        Console.Write("Returning to main menu.\nPress any key to continue...");
                         Console.ReadKey();
                         Console.CursorVisible = false;
                         return;
@@ -378,7 +387,7 @@ namespace Bank
 
         public override void ShowMenu()
         {
-            index = 0;
+            Index = 0;
             Console.CursorVisible = false;
             while (true)
             {
@@ -427,7 +436,7 @@ namespace Bank
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("\n\t\tUnable to procceed. Transaction failed.\n");
                 Console.ResetColor();
-                Console.Write("\\nPlease try again later, press any key to continue...");
+                Console.Write("\nPlease try again later, press any key to continue...");
                 Console.ReadKey();
                 return;
             };
@@ -464,7 +473,7 @@ namespace Bank
         internal void Withdraw()
         {
             string Type = "Withdraw from";
-            index = 0;
+            Index = 0;
             string with;
             decimal withdraw;
             decimal amount;
@@ -517,7 +526,10 @@ namespace Bank
                     Console.Write("You did not enter a number.\n");
                     if (n == 3)
                     {
-                        Console.Write("Three erroneous imputs. Returning to main menu.\nPress any key to continue...");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write("Three erroneous imputs. ");
+                        Console.ResetColor();
+                        Console.Write("Returning to main menu.\nPress any key to continue...");
                         Console.ReadKey();
                         Console.CursorVisible = false;
                         return;
@@ -551,7 +563,10 @@ namespace Bank
                     Console.Write("You do not have sufficient founds to complete this transaction.\n");
                     if (n == 3)
                     {
-                        Console.Write("Three erroneous imputs. Returning to main menu.\nPress any key to continue...");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write("Three erroneous imputs. ");
+                        Console.ResetColor();
+                        Console.Write("Returning to main menu.\nPress any key to continue...");
                         Console.ReadKey();
                         Console.CursorVisible = false;
                         return;
@@ -585,7 +600,10 @@ namespace Bank
                     Console.Write("You may not use zero or a negative number. \n");
                     if (n == 3)
                     {
-                        Console.Write("Three erroneous imputs. Returning to main menu.\nPress any key to continue...");
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.Write("Three erroneous imputs. ");
+                        Console.ResetColor();
+                        Console.Write("Returning to main menu.\nPress any key to continue...");
                         Console.ReadKey();
                         Console.CursorVisible = false;
                         return;
