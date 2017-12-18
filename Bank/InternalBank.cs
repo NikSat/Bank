@@ -127,7 +127,7 @@ namespace Bank
             {
                 return "Unable to retrieve summary for " + UserName +  ". Possible connection Error.";
             }
-            return "User name: " +UserName +" / Last transaction date: " +LastDate.ToString("d",gr) +" / Account Balance: " + LastBalance.ToString(gr);
+            return "User name: " +UserName +" / Last transaction date: " +LastDate.ToString("d",gr) +" / Account Balance: " + LastBalance.ToString("c",gr);
         }
 
 
